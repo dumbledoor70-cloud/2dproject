@@ -127,6 +127,27 @@ class UnRonCheonHa:
             result += f" 거점 2곳을 확보해 플레이어 {player_id} 승리!"
         return result
 
+    def advance_turn(self):
+        """차례를 넘기고 다음 플레이어의 본성·거점 수입을 지급한다."""
+        if self.winner is not None:
+            return
+        if self.turn >= MAX_TURNS:
+            lands1, _ = self.territory_count(1)
+            lands2, _ = self.territory_count(2)
+            if lands1 != lands2:
+                self.winner = 1 if lands1 > lands2 else 2
+            else:
+                troops1 = self.players[1]["troops"]
+                troops2 = self.players[2]["troops"]
+                self.winner = 1 if troops1 > troops2 else 2 if troops2 > troops1 else 0
+            return
+        self.turn += 1
+        self.current_player = 3 - self.current_player
+        player_id = self.current_player
+        income = sum(100 for row in self.board for tile in row
+                     if tile["owner"] == player_id and tile["kind"] in ("base", "fort"))
+        self.players[player_id]["troops"] += income
+
 
 def main():
     game = UnRonCheonHa()

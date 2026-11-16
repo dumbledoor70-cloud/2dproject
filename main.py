@@ -36,11 +36,35 @@ class UnRonCheonHa:
         for i, (r, c) in enumerate(special):
             self.board[r][c]["effect"] = EFFECTS[i // 2]
 
+    def territory_count(self, player_id):
+        """플레이어가 소유한 전체 영토 수와 거점 수를 반환한다."""
+        owned = [tile for row in self.board for tile in row if tile["owner"] == player_id]
+        forts = sum(tile["kind"] == "fort" for tile in owned)
+        return len(owned), forts
+
+    def display(self):
+        """현재 보드와 두 플레이어의 주요 수치를 출력한다."""
+        symbols = {"land": "·", "base": "城", "fort": "★"}
+        effects = {"안개": "안", "보급": "+", "전염병": "전"}
+        print(f"\n차례 {self.turn}/{MAX_TURNS} · 플레이어 {self.current_player}")
+        for r, row in enumerate(self.board):
+            cells = []
+            for c, tile in enumerate(row):
+                symbol = effects.get(tile["effect"], symbols[tile["kind"]])
+                for pid, player in self.players.items():
+                    if player["position"] == (r, c):
+                        symbol = f"P{pid}"
+                cells.append(f"{symbol:^3}")
+            print("|" + "|".join(cells) + "|")
+        for pid, player in self.players.items():
+            lands, forts = self.territory_count(pid)
+            print(f"P{pid}: 병력 {player['troops']}명 · 영토 {lands}곳 · 거점 {forts}/3")
+
 
 def main():
     game = UnRonCheonHa()
     print("운론천하 — 7×7 주사위 전략전")
-    print(f"보드가 준비되었습니다. 거점 {sum(t['kind'] == 'fort' for row in game.board for t in row)}곳")
+    game.display()
 
 
 if __name__ == "__main__":

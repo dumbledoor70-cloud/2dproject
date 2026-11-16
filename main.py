@@ -94,6 +94,7 @@ class UnRonCheonHa:
             force -= defense
             target["garrison"] = 0
             self.players[defender_id]["troops"] = 0
+            self.players[defender_id]["position"] = (0, 0) if defender_id == 1 else (6, 6)
             target["owner"] = player_id
         elif target["owner"] == player_id:
             force += target["garrison"]
@@ -148,11 +149,43 @@ class UnRonCheonHa:
                      if tile["owner"] == player_id and tile["kind"] in ("base", "fort"))
         self.players[player_id]["troops"] += income
 
+    def run(self):
+        """터미널에서 두 사람이 번갈아 진행하는 게임을 실행한다."""
+        print("운론천하 — 주사위로 펼치는 천하통일")
+        while self.winner is None:
+            self.display()
+            player = self.players[self.current_player]
+            if player["skip"]:
+                player["skip"] = False
+                print("안개 때문에 이번 차례는 쉽니다.")
+                self.advance_turn()
+                continue
+            while True:
+                direction = input("이동 방향 (북/남/동/서): ").strip()
+                if direction in ("북", "남", "동", "서"):
+                    break
+                print("북, 남, 동, 서 중 하나를 입력하세요.")
+            while True:
+                try:
+                    march = int(input(f"출정 병력 (100~{player['troops']}, 100명 단위): "))
+                except ValueError:
+                    print("병력은 숫자로 입력하세요.")
+                    continue
+                if 100 <= march <= player["troops"] and march % 100 == 0:
+                    break
+                print("보유 병력 범위 안에서 100명 단위로 입력하세요.")
+            print(self.move(direction, march))
+            self.advance_turn()
+        self.display()
+        if self.winner == 0:
+            print("20차례 종료 · 영토와 병력 수가 같아 무승부입니다.")
+        else:
+            print(f"플레이어 {self.winner} 승리! 천하를 통일했습니다.")
+
 
 def main():
     game = UnRonCheonHa()
-    print("운론천하 — 7×7 주사위 전략전")
-    game.display()
+    game.run()
 
 
 if __name__ == "__main__":

@@ -31,12 +31,18 @@ class UnRonCheonHa:
         """본성, 거점, 특수 칸을 무작위로 배치한다."""
         self.board[0][0].update(kind="base", owner=1)
         self.board[6][6].update(kind="base", owner=2)
-        available = [(r, c) for r in range(BOARD_SIZE) for c in range(BOARD_SIZE)
-                     if (r, c) not in ((0, 0), (6, 6))]
-        self.rng.shuffle(available)
-        for r, c in available[:3]:
+        rows = list(range(1, BOARD_SIZE - 1))
+        columns = list(range(1, BOARD_SIZE - 1))
+        self.rng.shuffle(rows)
+        self.rng.shuffle(columns)
+        fort_positions = list(zip(rows[:3], columns[:3]))
+        for r, c in fort_positions:
             self.board[r][c]["kind"] = "fort"
-        special = available[3:9]
+        occupied = {(0, 0), (6, 6), *fort_positions}
+        available = [(r, c) for r in range(BOARD_SIZE) for c in range(BOARD_SIZE)
+                     if (r, c) not in occupied]
+        self.rng.shuffle(available)
+        special = available[:6]
         for i, (r, c) in enumerate(special):
             self.board[r][c]["effect"] = EFFECTS[i // 2]
 

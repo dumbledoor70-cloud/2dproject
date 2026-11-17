@@ -209,6 +209,10 @@ class GameWindow:
         self.direction = tk.StringVar(value="동")
         self.march = tk.IntVar(value=100)
         self.board_image = tk.PhotoImage(file=str(Path(__file__).with_name("board.png"))).subsample(4, 4)
+        self.player_sprites = {
+            1: tk.PhotoImage(file=str(Path(__file__).with_name("player_token.png"))).subsample(6, 6),
+            2: tk.PhotoImage(file=str(Path(__file__).with_name("enemy_token.png"))).subsample(6, 6),
+        }
         self.canvas = tk.Canvas(root, width=525, height=525, highlightthickness=0)
         self.canvas.grid(row=0, column=0, rowspan=10, padx=18, pady=18)
         panel = tk.Frame(root, bg="#202e43", padx=18, pady=16)
@@ -295,18 +299,16 @@ class GameWindow:
                                                  fill=color, stipple="gray25", outline=color, width=2)
                 label = effect_labels.get(tile["effect"], {"land": "", "base": "◆", "fort": "★"}[tile["kind"]])
                 if label:
-                    self.canvas.create_text(x + cell/2, y + 20, text=label,
+                    self.canvas.create_text(x + 8, y + 8, text=label, anchor="nw",
                                              fill="#a3392f" if tile["effect"] == "전염병" else "#8e671f",
-                                             font=("맑은 고딕", 17, "bold"))
+                                             font=("맑은 고딕", 10, "bold"))
                 if tile["garrison"]:
                     self.canvas.create_text(x + cell - 13, y + cell - 13, text=str(tile["garrison"] // 100),
                                              fill="#27364b", font=("맑은 고딕", 9, "bold"))
                 for pid, player in game.players.items():
                     if player["position"] == (r, c):
-                        self.canvas.create_oval(x + 20, y + 32, x + 51, y + 63,
-                                                fill="#1c3937" if pid == 1 else "#562b2b", outline="white", width=2)
-                        self.canvas.create_text(x + 35.5, y + 47.5, text=str(pid), fill="white",
-                                                font=("맑은 고딕", 13, "bold"))
+                        self.canvas.create_image(x + cell/2, y + cell/2 + 2,
+                                                 image=self.player_sprites[pid], anchor="center")
         self.turn_label.config(text=f"차례 {game.turn} / {MAX_TURNS} · P{game.current_player}")
         self.status_label.config(text=game.last_message)
         for pid, player in game.players.items():

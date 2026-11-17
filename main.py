@@ -115,7 +115,7 @@ class UnRonCheonHa:
             player["troops"] += 100
             result += " 보급 +100명."
         elif effect == "전염병":
-            player["troops"] = max(0, player["troops"] - 100)
+            player["troops"] = max(100, player["troops"] - 100)
             result += " 전염병 -100명."
         elif effect == "안개":
             player["skip"] = True
@@ -225,6 +225,8 @@ class GameWindow:
         self.move_button.pack(fill="x", pady=(16, 10))
         tk.Label(panel, text="칸 안내\n◆ 본성   ★ 거점\n안 안개   + 보급   전 전염병",
                  justify="left", font=("맑은 고딕", 9), bg="#202e43", fg="#afbdd0").pack(anchor="w")
+        tk.Button(panel, text="새 게임", command=self.new_game, font=("맑은 고딕", 10, "bold"),
+                  bg="#344963", fg="white", relief="flat", pady=6).pack(fill="x", pady=(15, 0))
         self.render()
 
     def on_move(self):
@@ -255,6 +257,14 @@ class GameWindow:
             winner = "무승부" if game.winner == 0 else f"플레이어 {game.winner} 승리"
             game.last_message += f"\n{winner}!"
             self.status_label.config(text=game.last_message)
+
+    def new_game(self):
+        """새 보드와 초기 병력으로 대전을 다시 시작한다."""
+        self.game = UnRonCheonHa()
+        self.direction.set("동")
+        self.march.set(100)
+        self.move_button.config(state="normal")
+        self.render()
 
     def render(self):
         """보드 이미지 위에 영토, 특수 칸, 장수를 그린다."""

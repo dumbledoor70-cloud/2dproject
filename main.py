@@ -203,7 +203,7 @@ class GameWindow:
     def __init__(self, root):
         self.root = root
         self.game = UnRonCheonHa()
-        self.root.title("운론천하 · 주사위 전략전")
+        self.root.title("운론천하")
         self.root.configure(bg="#172233")
         self.root.resizable(False, False)
         self.direction = tk.StringVar(value="동")

@@ -121,7 +121,7 @@ class UnRonCheonHa:
             player["troops"] += 100
             result += " 보급 +100명."
         elif effect == "전염병":
-            player["troops"] = max(100, player["troops"] - 100)
+            player["troops"] = max(0, player["troops"] - 100)
             result += " 전염병 -100명."
         elif effect == "안개":
             player["skip"] = True
@@ -168,6 +168,10 @@ class UnRonCheonHa:
             if player["skip"]:
                 player["skip"] = False
                 print("안개 때문에 이번 차례는 쉽니다.")
+                self.advance_turn()
+                continue
+            if player["troops"] < 100:
+                print("출정 병력이 100명 미만이라 이번 차례를 넘깁니다.")
                 self.advance_turn()
                 continue
             while True:
@@ -242,6 +246,9 @@ class GameWindow:
         if player["skip"]:
             player["skip"] = False
             game.last_message = "안개 때문에 이번 차례는 쉽니다."
+            game.advance_turn()
+        elif player["troops"] < 100:
+            game.last_message = "출정 병력이 100명 미만이라 이번 차례를 넘깁니다."
             game.advance_turn()
         else:
             try:

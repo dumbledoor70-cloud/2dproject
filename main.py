@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 BOARD_SIZE = 7
-MAX_TURNS = 20
+MAX_TURNS = 40
 EFFECTS = ("안개", "보급", "전염병")
 
 
@@ -192,7 +192,7 @@ class UnRonCheonHa:
             self.advance_turn()
         self.display()
         if self.winner == 0:
-            print("20차례 종료 · 영토와 병력 수가 같아 무승부입니다.")
+            print(f"{MAX_TURNS}차례 종료 · 영토와 병력 수가 같아 무승부입니다.")
         else:
             print(f"플레이어 {self.winner} 승리! 천하를 통일했습니다.")
 

@@ -213,6 +213,10 @@ class GameWindow:
             1: tk.PhotoImage(file=str(Path(__file__).with_name("player_token.png"))).subsample(6, 6),
             2: tk.PhotoImage(file=str(Path(__file__).with_name("enemy_token.png"))).subsample(6, 6),
         }
+        self.soldier_sprites = {
+            1: tk.PhotoImage(file=str(Path(__file__).with_name("soldier_red.png"))).subsample(10, 10),
+            2: tk.PhotoImage(file=str(Path(__file__).with_name("soldier_blue.png"))).subsample(10, 10),
+        }
         self.canvas = tk.Canvas(root, width=525, height=525, highlightthickness=0)
         self.canvas.grid(row=0, column=0, rowspan=10, padx=18, pady=18)
         panel = tk.Frame(root, bg="#202e43", padx=18, pady=16)
@@ -303,8 +307,10 @@ class GameWindow:
                                              fill="#a3392f" if tile["effect"] == "전염병" else "#8e671f",
                                              font=("맑은 고딕", 10, "bold"))
                 if tile["garrison"]:
+                    self.canvas.create_image(x + cell - 20, y + cell - 19,
+                                             image=self.soldier_sprites[tile["owner"]], anchor="center")
                     self.canvas.create_text(x + cell - 13, y + cell - 13, text=str(tile["garrison"] // 100),
-                                             fill="#27364b", font=("맑은 고딕", 9, "bold"))
+                                             fill="white", font=("맑은 고딕", 9, "bold"))
                 for pid, player in game.players.items():
                     if player["position"] == (r, c):
                         self.canvas.create_image(x + cell/2, y + cell/2 + 2,
